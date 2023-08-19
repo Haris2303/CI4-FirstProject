@@ -30,13 +30,17 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-// Controller Home
+// Home
 $routes->get('/', 'Home::index');
-// Controller Comic
+
+// Comic
 $routes->get('/comics', 'Comic::index');
-// controller about
+$routes->get('/comic/(:segment)', 'Comic::detail/$1');
+
+// About
 $routes->get('/about', 'About::index');
-// controller contact
+
+// Contact
 $routes->get('/contact', 'Contact::index');
 
 /*
