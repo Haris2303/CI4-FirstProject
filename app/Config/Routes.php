@@ -35,7 +35,9 @@ $routes->get('/', 'Home::index');
 
 // Comic
 $routes->get('/comics', 'Comic::index');
+$routes->get('/comic/create', 'Comic::create');
 $routes->get('/comic/(:segment)', 'Comic::detail/$1');
+$routes->post('/comic/insert', 'Comic::insert');
 
 // About
 $routes->get('/about', 'About::index');

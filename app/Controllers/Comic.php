@@ -25,4 +25,49 @@ class Comic extends BaseController {
         return view('comic/detail', $data);
     }
 
+    public function create(): string {
+        $data = [
+            "title" => "Tambah Data",
+            "validation" => \Config\Services::validation()
+        ];
+
+        return view('comic/create', $data);
+    }
+
+    //____________________________________________________________________________________________
+
+    public function insert() {
+        $data = $this->request->getPost();
+        $validation = \Config\Services::validation();
+        
+        // check validation
+        if(!$this->validate([
+            'title' => [
+                'rules' => 'required|is_unique[comics.title]',
+                'errors' => [
+                    'required' => 'Kolom judul wajib diisi.',
+                    'is_unique' => 'Judul sudah terdaftar.'
+                ]
+            ],
+            'author' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Kolom penulis wajib diisi.'
+                ]
+            ],
+            'publisher' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Kolom penerbit wajib diisi.'
+                ]
+            ]
+        ])) {
+            return \redirect()->to('comic/create')->withInput()->with('validation', $validation);
+        }
+
+        $this->comicModel->insertData($data);
+        return redirect()->to('/comics');
+        
+    }
+
 }
