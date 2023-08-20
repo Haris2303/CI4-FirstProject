@@ -10,6 +10,13 @@
             <a href="/comic/create" class="btn btn-warning">Tambah Data</a>
         </div>
     </div>
+
+    <?php if(session('flash')): ?>
+        <div class="alert alert-primary" role="alert">
+            <?= session()->getFlashdata('flash') ?>
+        </div>
+    <?php endif ?>
+    
     <table class="table">
         <thead>
             <tr>

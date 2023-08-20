@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\HTTP\RedirectResponse;
+
 class Comic extends BaseController {
 
     protected $comicModel;
@@ -36,7 +38,7 @@ class Comic extends BaseController {
 
     //____________________________________________________________________________________________
 
-    public function insert() {
+    public function insert(): RedirectResponse {
         $data = $this->request->getPost();
         $validation = \Config\Services::validation();
         
@@ -66,8 +68,63 @@ class Comic extends BaseController {
         }
 
         $this->comicModel->insertData($data);
+        \session()->setFlashdata('flash', 'Data berhasil ditambahkan');
+
         return redirect()->to('/comics');
         
+    }
+
+    public function update($slug): string {
+        $data = [
+            'title' => "Ubah Data Comic",
+            'comic' => $this->comicModel->getData($slug)
+        ];
+
+        return view('comic/update', $data);
+    }
+
+    public function delete($id): RedirectResponse {
+        $this->comicModel->delete($id);
+        \session()->setFlashdata('flash', 'Data berhasil dihapus');
+        return \redirect()->to('/comics');
+    }
+
+    public function change(): RedirectResponse {
+        $data = $this->request->getPost();
+        $validation = \Config\Services::validation();
+
+        // rules title
+        $rules_title = ($data['title'] === $this->comicModel->getData($data['slug'])['title']) ? 'required' : 'required|is_unique[comics.title]';
+        
+        // check validation
+        if(!$this->validate([
+            'title' => [
+                'rules' => $rules_title,
+                'errors' => [
+                    'required' => 'Kolom judul wajib diisi.',
+                    'is_unique' => 'Judul sudah terdaftar.'
+                ]
+            ],
+            'author' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Kolom penulis wajib diisi.'
+                ]
+            ],
+            'publisher' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Kolom penerbit wajib diisi.'
+                ]
+            ]
+        ])) {
+            return \redirect()->to('comic/create')->withInput()->with('validation', $validation);
+        }
+
+        $this->comicModel->updateData($data);
+        \session()->setFlashdata('flash', 'Data berhasil diubah');
+
+        return redirect()->to('/comics');
     }
 
 }

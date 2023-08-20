@@ -14,9 +14,16 @@
                         <li class="list-group-item fs-3"><?= $comic['title'] ?></li>
                         <li class="list-group-item"><span class="fw-bold">Penulis :</span> <?= $comic['author'] ?></li>
                         <li class="list-group-item"><span class="fw-bold">Penerbit :</span> <?= $comic['publisher'] ?></li>
-                        <li class="list-group-item mt-3">
-                            <a href="/comics" class="btn btn-secondary me-2">Back</a>
-                            <a href="/comics" class="btn btn-warning">Edit</a>
+                        <li class="list-group-item">
+                            <form action="/comic/<?= $comic['id_comic'] ?>" method="post" class="d-inline">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger me-2">Hapus</button>
+                            </form>
+                            <a href="/comic/update/<?= $comic['slug'] ?>" class="btn btn-warning">Edit</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="/comics" class="btn badge btn-dark d-block">Kembali</a>
                         </li>
                     </ul>
                 </div>
