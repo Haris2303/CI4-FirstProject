@@ -4,10 +4,10 @@ namespace App\Controllers;
 
 use CodeIgniter\HTTP\RedirectResponse;
 
-class Comic extends BaseController {
-
+class Comic extends BaseController
+{
     protected $comicModel;
-    
+
     public function __construct()
     {
         $this->comicModel = new \App\Models\ComicModel();
@@ -21,29 +21,32 @@ class Comic extends BaseController {
         return view('comic/index', $data);
     }
 
-    public function detail($slug): string {
+    public function detail($slug): string
+    {
         $data['title'] = "Detail Comic";
         $data['comic'] = $this->comicModel->getData($slug);
         return view('comic/detail', $data);
     }
 
-    public function create(): string {
+    public function create(): string
+    {
         $data = [
             "title" => "Tambah Data",
             "validation" => \Config\Services::validation()
         ];
 
-        return view('comic/create', $data);
+        return view('/comic/create', $data);
     }
 
     //____________________________________________________________________________________________
 
-    public function insert(): RedirectResponse {
+    public function insert(): RedirectResponse
+    {
         $data = $this->request->getPost();
         $validation = \Config\Services::validation();
-        
+
         // check validation
-        if(!$this->validate([
+        if (!$this->validate([
             'title' => [
                 'rules' => 'required|is_unique[comics.title]',
                 'errors' => [
@@ -70,11 +73,11 @@ class Comic extends BaseController {
         $this->comicModel->insertData($data);
         \session()->setFlashdata('flash', 'Data berhasil ditambahkan');
 
-        return redirect()->to('/comics');
-        
+        return redirect()->to('comics');
     }
 
-    public function update($slug): string {
+    public function update($slug): string
+    {
         $data = [
             'title' => "Ubah Data Comic",
             'comic' => $this->comicModel->getData($slug)
@@ -83,23 +86,26 @@ class Comic extends BaseController {
         return view('comic/update', $data);
     }
 
-    public function delete($id): RedirectResponse {
+    public function delete($id): RedirectResponse
+    {
         $this->comicModel->delete($id);
         \session()->setFlashdata('flash', 'Data berhasil dihapus');
         return \redirect()->to('/comics');
     }
 
-    public function change(): RedirectResponse {
+    public function change(): RedirectResponse
+    {
         $data = $this->request->getPost();
         $validation = \Config\Services::validation();
 
         // rules title
-        $rules_title = ($data['title'] === $this->comicModel->getData($data['slug'])['title']) ? 'required' : 'required|is_unique[comics.title]';
-        
+        $rowTitle = $this->comicModel->getData($data['slug'])['title'];
+        $rulesTitle = ($data['title'] === $rowTitle) ? 'required' : 'required|is_unique[comics.title]';
+
         // check validation
-        if(!$this->validate([
+        if (!$this->validate([
             'title' => [
-                'rules' => $rules_title,
+                'rules' => $rulesTitle,
                 'errors' => [
                     'required' => 'Kolom judul wajib diisi.',
                     'is_unique' => 'Judul sudah terdaftar.'
@@ -126,5 +132,4 @@ class Comic extends BaseController {
 
         return redirect()->to('/comics');
     }
-
 }
